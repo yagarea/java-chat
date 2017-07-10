@@ -9,10 +9,12 @@ public class ClientConnection implements Runnable {
     private Socket clientSocket;
     private PrintWriter socketWriter;
     private Set<ClientConnection> clients;
+    private RSA decryptor;
 
-    public ClientConnection(Socket clientSocket, Set clients) {
+    public ClientConnection(Socket clientSocket, Set clients, RSA decryptor) {
         this.clientSocket = clientSocket;
         this.clients = clients;
+        this.decryptor = decryptor;
         try {
             this.socketWriter = new PrintWriter(clientSocket.getOutputStream());
         } catch (IOException e) {
@@ -29,10 +31,11 @@ public class ClientConnection implements Runnable {
                 if (clientData == null) {
                     break;
                 }
+                String message = decryptor.decryptString(clientData);
 
                 for (ClientConnection cC : clients) {
                     if (cC != this) {
-                        cC.send(clientData);
+                        cC.send(message);
                     }
                 }
             }
@@ -43,7 +46,6 @@ public class ClientConnection implements Runnable {
 
     public void send(String message) {
         try {
-            System.out.println(message);
             socketWriter.println(message);
             socketWriter.flush();
         } catch (Exception e) {

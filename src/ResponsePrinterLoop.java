@@ -8,11 +8,17 @@ import java.net.Socket;
  */
 public class ResponsePrinterLoop implements Runnable {
     Socket clientSocket;
+    private BufferedReader socketReader;
+
+
+    public ResponsePrinterLoop(Socket input) throws IOException {
+        this.clientSocket = input;
+        this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    }
 
     @Override
     public void run() {
         try {
-            BufferedReader socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             while (true) {
                 System.out.println(socketReader.readLine());
             }
@@ -21,7 +27,7 @@ public class ResponsePrinterLoop implements Runnable {
         }
     }
 
-    public ResponsePrinterLoop(Socket input) {
-        this.clientSocket = input;
+    public String readLine() throws IOException {
+        return socketReader.readLine();
     }
 }
