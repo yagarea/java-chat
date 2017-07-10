@@ -9,10 +9,12 @@ import java.net.Socket;
 public class ResponsePrinterLoop implements Runnable {
     Socket clientSocket;
     private BufferedReader socketReader;
+    private RSA decryptor;
 
 
-    public ResponsePrinterLoop(Socket input) throws IOException {
+    public ResponsePrinterLoop(Socket input, RSA decryptor) throws IOException {
         this.clientSocket = input;
+        this.decryptor = decryptor;
         this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
@@ -20,7 +22,13 @@ public class ResponsePrinterLoop implements Runnable {
     public void run() {
         try {
             while (true) {
-                System.out.println(socketReader.readLine());
+                String line = socketReader.readLine();
+                if (line != null) {
+                    System.out.println(decryptor.decryptString(line));
+                } else {
+                    System.err.println("SERVER DISCONNECTED");
+                    break;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

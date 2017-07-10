@@ -9,13 +9,19 @@ public class Client {
     public static void main(String[] args) {
         try {
             Socket clientSocket = new Socket("localhost", 4077);
-            ResponsePrinterLoop responsePrinterLoop = new ResponsePrinterLoop(clientSocket);
-            Thread listner = new Thread(responsePrinterLoop);
+
+            RSA decryptor = new RSA();
+            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
+            writer.println(decryptor.getE());
+            writer.println(decryptor.getN());
+            writer.flush();
+
+            ResponsePrinterLoop responsePrinterLoop = new ResponsePrinterLoop(clientSocket, decryptor);
             BigInteger e = new BigInteger(responsePrinterLoop.readLine());
             BigInteger n = new BigInteger(responsePrinterLoop.readLine());
             RSA encryptor = new RSA(e, n);
+            Thread listner = new Thread(responsePrinterLoop);
             listner.start();
-            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
             BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
                 String messageToServer = consoleReader.readLine();
