@@ -13,9 +13,10 @@ public class Server {
         try {
             ServerSocket chatServer = new ServerSocket(PORT);
             Map<String, ClientConnection> clients = new HashMap<>();
+            Authenticator auth = new Authenticator();
             while (true) {
                 Socket clientSocket = chatServer.accept();
-                ClientConnection newClient = new ClientConnection(clientSocket, clients, encryptor);
+                ClientConnection newClient = new ClientConnection(clientSocket, clients, encryptor, auth);
 
                 new Thread(newClient).start();
                 clients.put(newClient.username, newClient);

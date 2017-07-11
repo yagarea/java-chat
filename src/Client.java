@@ -26,11 +26,14 @@ public class Client {
             do {
                 System.out.print("Nickname: ");
                 String username = consoleReader.readLine();
+                System.out.print("Password: ");
+                String password = consoleReader.readLine();
                 writer.println(encryptor.encryptString(username));
+                writer.println(encryptor.encryptString(password));
                 writer.flush();
                 usernameResponse = decryptor.decryptString(responsePrinterLoop.readLine());
-            } while (usernameResponse.equals("WRONG USERNAME"));
-
+            } while (usernameResponse.equals("WRONG LOGIN"));
+            System.out.println("Logged in");
             new Thread(responsePrinterLoop).start();
             while (true) {
                 String messageToServer = consoleReader.readLine();
