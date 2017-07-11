@@ -20,17 +20,24 @@ public class Client {
             BigInteger e = new BigInteger(responsePrinterLoop.readLine());
             BigInteger n = new BigInteger(responsePrinterLoop.readLine());
             RSA encryptor = new RSA(e, n);
-            Thread listener = new Thread(responsePrinterLoop);
-            listener.start();
             BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.print("Username: ");
-            String username = consoleReader.readLine();
-            writer.println(encryptor.encryptString(username));
-            writer.flush();
+
+            String usernameResponse;
+            do {
+                System.out.print("Nickname: ");
+                String username = consoleReader.readLine();
+                writer.println(encryptor.encryptString(username));
+                writer.flush();
+                usernameResponse = decryptor.decryptString(responsePrinterLoop.readLine());
+            } while (usernameResponse.equals("WRONG USERNAME"));
+
+            new Thread(responsePrinterLoop).start();
             while (true) {
                 String messageToServer = consoleReader.readLine();
-                writer.println(encryptor.encryptString(messageToServer));
-                writer.flush();
+                if (!messageToServer.equals("")) {
+                    writer.println(encryptor.encryptString(messageToServer));
+                    writer.flush();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
