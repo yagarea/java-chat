@@ -7,24 +7,25 @@ import java.net.Socket;
 import java.util.Set;
 
 public class ClientConnection implements Runnable {
-    private Socket clientSocket;
     private PrintWriter socketWriter;
     private Set<ClientConnection> clients;
     private RSA decryptor;
     private RSA encryptor;
     private BufferedReader socketReader;
+    private String username;
 
-
-    public ClientConnection(Socket clientSocket, Set clients, RSA decryptor) {
-        this.clientSocket = clientSocket;
+    ClientConnection(Socket clientSocket, Set<ClientConnection> clients, RSA decryptor) {
         this.clients = clients;
         this.decryptor = decryptor;
         try {
             this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.socketWriter = new PrintWriter(clientSocket.getOutputStream());
+            send(decryptor.getE().toString());
+            send(decryptor.getN().toString());
             BigInteger e = new BigInteger(socketReader.readLine());
             BigInteger n = new BigInteger(socketReader.readLine());
             encryptor = new RSA(e, n);
+            this.username = decryptor.decryptString(socketReader.readLine());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +41,7 @@ public class ClientConnection implements Runnable {
                     break;
                 }
                 String message = decryptor.decryptString(clientData);
-
+                message = username + " :  " + message;
                 for (ClientConnection cC : clients) {
                     if (cC != this) {
                         cC.send(cC.encryptor.encryptString(message));
@@ -52,7 +53,7 @@ public class ClientConnection implements Runnable {
         }
     }
 
-    public void send(String message) {
+    private void send(String message) {
         try {
             socketWriter.println(message);
             socketWriter.flush();

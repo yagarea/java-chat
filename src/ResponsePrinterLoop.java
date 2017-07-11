@@ -7,15 +7,13 @@ import java.net.Socket;
  * Created by John on 09.07.17.
  */
 public class ResponsePrinterLoop implements Runnable {
-    Socket clientSocket;
     private BufferedReader socketReader;
     private RSA decryptor;
 
 
     public ResponsePrinterLoop(Socket input, RSA decryptor) throws IOException {
-        this.clientSocket = input;
         this.decryptor = decryptor;
-        this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.socketReader = new BufferedReader(new InputStreamReader(input.getInputStream()));
     }
 
     @Override
@@ -27,7 +25,8 @@ public class ResponsePrinterLoop implements Runnable {
                     System.out.println(decryptor.decryptString(line));
                 } else {
                     System.err.println("SERVER DISCONNECTED");
-                    break;
+                    // Must by sys.exit - when only break; -ing, main Thread will continue to run
+                    System.exit(0);
                 }
             }
         } catch (IOException e) {
