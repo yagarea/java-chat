@@ -13,6 +13,7 @@ public class ClientConnection implements Runnable {
     private static final Pattern PRIVATE_MESSAGE_NICKNAME_PATTERN = Pattern.compile("@(\\w+) (.*)");
     private static final Pattern NICKNAME_RULES = Pattern.compile("\\w+");
 
+
     protected String username;
     private PrintWriter socketWriter;
     private Map<String, ClientConnection> clients;
@@ -20,7 +21,7 @@ public class ClientConnection implements Runnable {
     private RSA encryptor;
     private BufferedReader socketReader;
 
-    ClientConnection(Socket clientSocket, Map<String, ClientConnection> clients, RSA decryptor) {
+    ClientConnection(Socket clientSocket, Map<String, ClientConnection> clients, RSA decryptor, Authenticator authenticator) {
         this.clients = clients;
         this.decryptor = decryptor;
         try {
@@ -34,12 +35,17 @@ public class ClientConnection implements Runnable {
             while (true) {
                 String encryptedUsername = socketReader.readLine();
                 String decryptedUsername = decryptor.decryptString(encryptedUsername);
-                if (NICKNAME_RULES.matcher(decryptedUsername).matches() && !clients.containsKey(decryptedUsername)) {
+                String encryptedPassword = socketReader.readLine();
+                String decryptedPassword = decryptor.decryptString(encryptedPassword);
+                if (NICKNAME_RULES.matcher(decryptedUsername).matches() &&
+                        !clients.containsKey(decryptedUsername) &&
+                        authenticator.authenticate(decryptedUsername, decryptedPassword)) {
+
                     this.username = decryptedUsername;
-                    send(encryptor.encryptString("USERNAME ACCEPTED"));
+                    send(encryptor.encryptString("LOGIN ACCEPTED"));
                     break;
                 } else {
-                    send(encryptor.encryptString("WRONG USERNAME"));
+                    send(encryptor.encryptString("WRONG LOGIN"));
                 }
             }
         } catch (IOException e) {
