@@ -1,8 +1,8 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
 
@@ -12,13 +12,13 @@ public class Server {
 
         try {
             ServerSocket chatServer = new ServerSocket(PORT);
-            Set<ClientConnection> clients = new HashSet<>();
+            Map<String, ClientConnection> clients = new HashMap<>();
             while (true) {
                 Socket clientSocket = chatServer.accept();
                 ClientConnection newClient = new ClientConnection(clientSocket, clients, encryptor);
 
                 new Thread(newClient).start();
-                clients.add(newClient);
+                clients.put(newClient.username, newClient);
             }
         } catch (IOException e) {
             e.printStackTrace();
