@@ -34,6 +34,7 @@ public class Authenticator {
     }
 
     public boolean authenticate(String descryptedUsername, String descryptedPassword) {
-        return descryptedPassword.equals(users.get(descryptedUsername));
+        String hashPassword = ShaUtil.hash(descryptedPassword);
+        return hashPassword.equals(users.get(descryptedUsername));
     }
 }
