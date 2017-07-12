@@ -1,9 +1,8 @@
+package com.github.yagarea.chat.shared.security;
+
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 
-/**
- * Created by John on 12.07.17.
- */
 public class ShaUtil {
     public static void main(String[] args) {
         System.out.println(hash("honza"));

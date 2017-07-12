@@ -1,3 +1,5 @@
+package com.github.yagarea.chat.shared.security;
+
 import java.math.BigInteger;
 import java.util.Random;
 

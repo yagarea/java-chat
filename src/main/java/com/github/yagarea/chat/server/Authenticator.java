@@ -1,3 +1,7 @@
+package com.github.yagarea.chat.server;
+
+import com.github.yagarea.chat.shared.security.ShaUtil;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
