@@ -1,3 +1,7 @@
+package com.github.yagarea.chat.server;
+
+import com.github.yagarea.chat.shared.security.RSA;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
