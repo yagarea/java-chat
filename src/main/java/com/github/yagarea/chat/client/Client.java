@@ -1,5 +1,6 @@
 package com.github.yagarea.chat.client;
 
+import com.github.yagarea.chat.shared.security.LoginResponse;
 import com.github.yagarea.chat.shared.security.RSA;
 
 import java.io.BufferedReader;
@@ -26,7 +27,7 @@ public class Client {
             RSA encryptor = new RSA(e, n);
             BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
-            String usernameResponse;
+            LoginResponse usernameResponse;
             do {
                 System.out.print("Nickname: ");
                 String username = consoleReader.readLine();
@@ -35,9 +36,9 @@ public class Client {
                 writer.println(encryptor.encryptString(username));
                 writer.println(encryptor.encryptString(password));
                 writer.flush();
-                usernameResponse = decryptor.decryptString(responsePrinterLoop.readLine());
-                System.out.println(usernameResponse);
-            } while (!(usernameResponse.equals("LOGIN ACCEPTED") || usernameResponse.equals("USER REGISTERED")));
+                usernameResponse = LoginResponse.valueOf(decryptor.decryptString(responsePrinterLoop.readLine()));
+                System.out.println(usernameResponse.name());
+            } while (usernameResponse != LoginResponse.LOGIN_ACCPETED && usernameResponse != LoginResponse.REGISTERED);
             new Thread(responsePrinterLoop).start();
             while (true) {
                 String messageToServer = consoleReader.readLine();
