@@ -14,42 +14,40 @@ public class ClientConnection implements Runnable {
     private static final Pattern NICKNAME_RULES = Pattern.compile("\\w+");
 
 
-    protected String username;
-    private PrintWriter socketWriter;
-    private Map<String, ClientConnection> clients;
-    private RSA decryptor;
-    private RSA encryptor;
-    private BufferedReader socketReader;
+    protected final String username;
+    private final PrintWriter socketWriter;
+    private final Map<String, ClientConnection> clients;
+    private final RSA decryptor;
+    private final RSA encryptor;
+    private final BufferedReader socketReader;
 
-    ClientConnection(Socket clientSocket, Map<String, ClientConnection> clients, RSA decryptor, Authenticator authenticator) {
+    ClientConnection(Socket clientSocket, Map<String, ClientConnection> clients, RSA decryptor, Authenticator authenticator) throws IOException {
+        this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.socketWriter = new PrintWriter(clientSocket.getOutputStream());
         this.clients = clients;
         this.decryptor = decryptor;
-        try {
-            this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            this.socketWriter = new PrintWriter(clientSocket.getOutputStream());
-            send(decryptor.getE().toString());
-            send(decryptor.getN().toString());
-            BigInteger e = new BigInteger(socketReader.readLine());
-            BigInteger n = new BigInteger(socketReader.readLine());
-            encryptor = new RSA(e, n);
-            while (true) {
-                String encryptedUsername = socketReader.readLine();
-                String decryptedUsername = decryptor.decryptString(encryptedUsername);
-                String encryptedPassword = socketReader.readLine();
-                String decryptedPassword = decryptor.decryptString(encryptedPassword);
-                if (NICKNAME_RULES.matcher(decryptedUsername).matches() &&
-                        !clients.containsKey(decryptedUsername) &&
-                        authenticator.authenticate(decryptedUsername, decryptedPassword)) {
 
-                    this.username = decryptedUsername;
-                    send(encryptor.encryptString("LOGIN ACCEPTED"));
-                    break;
-                } else {
-                    send(encryptor.encryptString("WRONG LOGIN"));
-                }
+        sendEncryptionKeys();
+
+        encryptor = makeEncryptor();
+        this.username = authenticateUser(authenticator);
+    }
+
+    private String authenticateUser(Authenticator authenticator) throws IOException {
+        while (true) {
+            String encryptedUsername = socketReader.readLine();
+            String decryptedUsername = decryptor.decryptString(encryptedUsername);
+            String encryptedPassword = socketReader.readLine();
+            String decryptedPassword = decryptor.decryptString(encryptedPassword);
+            if (NICKNAME_RULES.matcher(decryptedUsername).matches() &&
+                    !clients.containsKey(decryptedUsername) &&
+                    authenticator.authenticate(decryptedUsername, decryptedPassword)) {
+
+                send(encryptor.encryptString("LOGIN ACCEPTED"));
+                return decryptedUsername;
+            } else {
+                send(encryptor.encryptString("WRONG LOGIN"));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -111,5 +109,16 @@ public class ClientConnection implements Runnable {
         } else {
             send(encryptor.encryptString("SERVER: WRONG NICKNAME"));
         }
+    }
+
+    private void sendEncryptionKeys() {
+        send(decryptor.getE().toString());
+        send(decryptor.getN().toString());
+    }
+
+    private RSA makeEncryptor() throws IOException {
+        BigInteger e = new BigInteger(socketReader.readLine());
+        BigInteger n = new BigInteger(socketReader.readLine());
+        return new RSA(e, n);
     }
 }
