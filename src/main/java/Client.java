@@ -8,7 +8,7 @@ import java.net.Socket;
 public class Client {
     public static void main(String[] args) {
         try {
-            Socket clientSocket = new Socket("localhost", 4077);
+            Socket clientSocket = new Socket(args[0], Integer.parseInt(args[1]));
 
             RSA decryptor = new RSA();
             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
