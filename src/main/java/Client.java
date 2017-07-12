@@ -32,8 +32,8 @@ public class Client {
                 writer.println(encryptor.encryptString(password));
                 writer.flush();
                 usernameResponse = decryptor.decryptString(responsePrinterLoop.readLine());
-            } while (usernameResponse.equals("WRONG LOGIN"));
-            System.out.println("Logged in");
+                System.out.println(usernameResponse);
+            } while (!(usernameResponse.equals("LOGIN ACCEPTED") || usernameResponse.equals("USER REGISTERED")));
             new Thread(responsePrinterLoop).start();
             while (true) {
                 String messageToServer = consoleReader.readLine();

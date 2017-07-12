@@ -39,16 +39,25 @@ public class ClientConnection implements Runnable {
             String decryptedUsername = decryptor.decryptString(encryptedUsername);
             String encryptedPassword = socketReader.readLine();
             String decryptedPassword = decryptor.decryptString(encryptedPassword);
-            if (NICKNAME_RULES.matcher(decryptedUsername).matches() &&
-                    !clients.containsKey(decryptedUsername) &&
-                    authenticator.authenticate(decryptedUsername, decryptedPassword)) {
 
-                send(encryptor.encryptString("LOGIN ACCEPTED"));
-                return decryptedUsername;
+            if (NICKNAME_RULES.matcher(decryptedUsername).matches()) {
+                if (authenticator.userIsRegistered(decryptedUsername)) {
+                    if (authenticator.authenticate(decryptedUsername, decryptedPassword)) {
+                        sendEncrypeted("LOGIN ACCEPTED");
+                        return decryptedUsername;
+                    } else {
+                        sendEncrypeted("WRONG PASSWORD");
+                    }
+                } else {
+                    authenticator.registerUser(decryptedUsername, decryptedPassword);
+                    sendEncrypeted("USER REGISTERED");
+                    return decryptedUsername;
+                }
             } else {
-                send(encryptor.encryptString("WRONG LOGIN"));
+                sendEncrypeted("INVALID USERNAME");
             }
         }
+
     }
 
     @Override
