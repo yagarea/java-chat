@@ -58,6 +58,7 @@ public class ClientConnection implements Runnable {
             while (true) {
                 String clientData = socketReader.readLine();
                 if (clientData == null) {
+                    clients.remove(username);
                     break;
                 }
 
@@ -97,15 +98,15 @@ public class ClientConnection implements Runnable {
 
     private void sendClientList() {
         for (String nickname : clients.keySet()) {
-            send(encryptor.encryptString(nickname));
+            send(encryptor.encryptString("\t" + nickname));
         }
     }
 
     private void sendPrivateMessage(Matcher privateMessageMatcher) {
-        String nickname = privateMessageMatcher.group(1);
+        String to = privateMessageMatcher.group(1);
         String messageText = privateMessageMatcher.group(2);
-        if (clients.keySet().contains(nickname)) {
-            clients.get(nickname).send(clients.get(nickname).encryptor.encryptString("PRIVATE " + nickname + ": " + messageText));
+        if (clients.keySet().contains(to)) {
+            clients.get(to).send(clients.get(to).encryptor.encryptString("PRIVATE " + username + ": " + messageText));
         } else {
             send(encryptor.encryptString("SERVER: WRONG NICKNAME"));
         }

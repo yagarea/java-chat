@@ -9,14 +9,14 @@ import java.util.regex.Pattern;
 
 public class Authenticator {
 
-    private static final String FILE = "Authentication.txt";
+
     private Pattern login = Pattern.compile("(\\w+):(.+)");
     private Map<String, String> users;
 
 
-    public Authenticator() {
+    public Authenticator(String file) {
         try {
-            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE)));
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             users = new HashMap<>();
             while (true) {
                 String line = fileReader.readLine();
