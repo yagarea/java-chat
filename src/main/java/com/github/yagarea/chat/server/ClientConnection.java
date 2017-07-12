@@ -1,5 +1,6 @@
 package com.github.yagarea.chat.server;
 
+import com.github.yagarea.chat.shared.security.LoginResponse;
 import com.github.yagarea.chat.shared.security.RSA;
 
 import java.io.BufferedReader;
@@ -45,20 +46,24 @@ public class ClientConnection implements Runnable {
             String decryptedPassword = decryptor.decryptString(encryptedPassword);
 
             if (NICKNAME_RULES.matcher(decryptedUsername).matches()) {
-                if (authenticator.userIsRegistered(decryptedUsername)) {
-                    if (authenticator.authenticate(decryptedUsername, decryptedPassword)) {
-                        sendEncrypeted("LOGIN ACCEPTED");
-                        return decryptedUsername;
+                if (!clients.containsKey(decryptedUsername)) {
+                    if (authenticator.userIsRegistered(decryptedUsername)) {
+                        if (authenticator.authenticate(decryptedUsername, decryptedPassword)) {
+                            sendEncrypeted(LoginResponse.LOGIN_ACCPETED.name());
+                            return decryptedUsername;
+                        } else {
+                            sendEncrypeted(LoginResponse.PASSWORD_INVALID.name());
+                        }
                     } else {
-                        sendEncrypeted("WRONG PASSWORD");
+                        authenticator.registerUser(decryptedUsername, decryptedPassword);
+                        sendEncrypeted(LoginResponse.REGISTERED.name());
+                        return decryptedUsername;
                     }
                 } else {
-                    authenticator.registerUser(decryptedUsername, decryptedPassword);
-                    sendEncrypeted("USER REGISTERED");
-                    return decryptedUsername;
+                    sendEncrypeted(LoginResponse.ALREADY_LOGGED_IN.name());
                 }
             } else {
-                sendEncrypeted("INVALID USERNAME");
+                sendEncrypeted(LoginResponse.INVALID_USERNAME.name());
             }
         }
 
