@@ -53,12 +53,12 @@ public class ClientConnection implements Runnable {
 
     @Override
     public void run() {
+        broadcast(username + " has joined this chatting room");
         try {
-
             while (true) {
                 String clientData = socketReader.readLine();
                 if (clientData == null) {
-                    clients.remove(username);
+                    disconnect();
                     break;
                 }
 
@@ -69,36 +69,43 @@ public class ClientConnection implements Runnable {
                 } else if (privateMessageMatcher.matches()) {
                     sendPrivateMessage(privateMessageMatcher);
                 } else {
-                    sendTextMessage(message);
+                    broadcast(username + ": " + message);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            disconnect();
         }
     }
 
-    private void sendTextMessage(String message) {
-        message = username + " :  " + message;
+    private void disconnect() {
+        clients.remove(username);
+        broadcast(username + " has disconnected this chatting room");
+    }
+
+    private void broadcast(String message) {
         for (ClientConnection cC : clients.values()) {
             if (cC != this) {
-                cC.send(cC.encryptor.encryptString(message));
+                cC.sendEncrypeted(message);
             }
         }
     }
 
-    private void send(String message) {
+    private void send(String data) {
         try {
-            socketWriter.println(message);
+            socketWriter.println(data);
             socketWriter.flush();
         } catch (Exception e) {
-            clients.remove(this);
-            System.err.println("Client disconnected");
+            disconnect();
         }
+    }
+
+    private void sendEncrypeted(String message) {
+        send(encryptor.encryptString(message));
     }
 
     private void sendClientList() {
         for (String nickname : clients.keySet()) {
-            send(encryptor.encryptString("\t" + nickname));
+            sendEncrypeted("\t" + nickname);
         }
     }
 
@@ -106,9 +113,9 @@ public class ClientConnection implements Runnable {
         String to = privateMessageMatcher.group(1);
         String messageText = privateMessageMatcher.group(2);
         if (clients.keySet().contains(to)) {
-            clients.get(to).send(clients.get(to).encryptor.encryptString("PRIVATE " + username + ": " + messageText));
+            clients.get(to).sendEncrypeted("PRIVATE " + username + ": " + messageText);
         } else {
-            send(encryptor.encryptString("SERVER: WRONG NICKNAME"));
+            sendEncrypeted("SERVER: WRONG NICKNAME");
         }
     }
 
@@ -122,4 +129,5 @@ public class ClientConnection implements Runnable {
         BigInteger n = new BigInteger(socketReader.readLine());
         return new RSA(e, n);
     }
+
 }
