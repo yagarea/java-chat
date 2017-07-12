@@ -1,4 +1,4 @@
-package com.github.yagarea.chat.shared.security;
+package com.github.yagarea.chat.shared;
 
 /**
  * Created by John on 12.07.17.

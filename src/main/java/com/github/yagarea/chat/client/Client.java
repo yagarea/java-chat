@@ -1,6 +1,6 @@
 package com.github.yagarea.chat.client;
 
-import com.github.yagarea.chat.shared.security.LoginResponse;
+import com.github.yagarea.chat.shared.LoginResponse;
 import com.github.yagarea.chat.shared.security.RSA;
 
 import java.io.BufferedReader;
