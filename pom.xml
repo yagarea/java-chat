@@ -37,7 +37,7 @@
                             </descriptors>
                             <archive>
                                 <manifest>
-                                    <mainClass>cz.lsmstepanov.chat.server.com.github.yagarea.chat.server.Server
+                                    <mainClass>com.github.yagarea.chat.server.Server
                                     </mainClass>
                                 </manifest>
                             </archive>
@@ -57,7 +57,7 @@
                             </descriptors>
                             <archive>
                                 <manifest>
-                                    <mainClass>cz.lsmstepanov.chat.client.com.github.yagarea.chat.client.Client
+                                    <mainClass>com.github.yagarea.chat.client.Client
                                     </mainClass>
                                 </manifest>
                             </archive>
