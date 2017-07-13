@@ -2,9 +2,7 @@
 Simple encrypted chat in Java
 
 ## Introduction
-Tento projekt vznikl jako moje osobní závěrečná práce v rámci edukační události lsm (lsmstepanov.cz).
-Celý projekt je k dispozici každému osobním nebo edukačním účelům. Pokud vám tento projekt pomohl, prosím označte ho hvězdičkou.
-Pokud do něho chcete přispět, jsem otevřený vašim pull requestům.
+This project was created as my personal final work within the educational event LSM (lsmstepanov.cz). The entire project is available for all personal or educational purposes. If this project helped you, mark this repository with star. If you want to contribute, I'm open to your pull requests.
 
 ## Project decription
 ####Prefereces
@@ -18,7 +16,7 @@ Project is wrote in Java 1.8. It's using xy libraries.
 ### server
 you can run it from your IDE or just using by terminal:
    ```
-   java -jar server.jarauthenticationFile port
+   java -jar server.jar authenticationFile port
    ```
    Example:
    ```
@@ -35,5 +33,5 @@ Example:
 java -jar target/client.jar localhost 4077
 ```
 ## Credits
-Jan Černý - programmer
-Jan
+##### Jan Černý - programmer
+##### Jan Žarnikov - My teacher
