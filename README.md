@@ -2,18 +2,18 @@
 Encrypted terminal chat wrote in java
 
 ## Introduction
-This project was created as my personal final work within the educational event LSM (lsmstepanov.cz). The entire project is available for all personal or educational purposes. If this project helped you, mark this repository with star. If you want to contribute, I'm open to your pull requests.
+This project was created as my personal final work within the educational event LSM (lsmstepanov.cz). The entire project is available for all personal or educational purposes. If this project helped you, mark this repository with star. If you want to contribute, I'm open to your pull requests. Feel free to contact me on j.cerny.zdar@gmail.com
 
-## Project decription
+## Project description
 #### Prefereces
 Project is wrote in Java 1.8. It's using xy libraries.
 
 #### Security
-* communication between server and client is encrypted by RSA
+* Communication between server and client is encrypted by RSA
 * Passwords are saved as SHA hashes
 
 ## Usage
-### server
+### Server
 you can run it from your IDE or just using by terminal:
    ```
    java -jar server.jar authenticationFile port
