@@ -67,6 +67,7 @@ public class Authenticator {
             for (String userNameInSet : users.keySet()) {
                 fileWriter.println(userNameInSet + ":" + users.get(userNameInSet));
             }
+            fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -25,6 +25,7 @@ public class ClientConnection implements Runnable {
     private final RSA decryptor;
     private final RSA encryptor;
     private final BufferedReader socketReader;
+    private final Authenticator authenticator;
 
     ClientConnection(Socket clientSocket, Map<String, ClientConnection> clients, RSA decryptor, Authenticator authenticator) throws IOException {
         this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -33,12 +34,12 @@ public class ClientConnection implements Runnable {
         this.decryptor = decryptor;
 
         sendEncryptionKeys();
-
+        this.authenticator = authenticator;
         encryptor = makeEncryptor();
-        this.username = authenticateUser(authenticator);
+        this.username = authenticateUser();
     }
 
-    private String authenticateUser(Authenticator authenticator) throws IOException {
+    private String authenticateUser() throws IOException {
         while (true) {
             String encryptedUsername = socketReader.readLine();
             String decryptedUsername = decryptor.decryptString(encryptedUsername);
@@ -84,6 +85,9 @@ public class ClientConnection implements Runnable {
                 Matcher privateMessageMatcher = PRIVATE_MESSAGE_NICKNAME_PATTERN.matcher(message);
                 if (message.equals(":clients")) {
                     sendClientList();
+                } else if (message.startsWith(":changePassword")) {
+                    authenticator.changePassword(username, message.substring(":changePassword ".length()));
+                    sendEncrypeted("PASSWORD CHANGED");
                 } else if (privateMessageMatcher.matches()) {
                     sendPrivateMessage(privateMessageMatcher);
                 } else {
