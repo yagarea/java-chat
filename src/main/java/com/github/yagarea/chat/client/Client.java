@@ -1,7 +1,9 @@
 package com.github.yagarea.chat.client;
 
-import com.github.yagarea.chat.shared.ConsoleUtility;
 import com.github.yagarea.chat.shared.LoginResponse;
+import com.github.yagarea.chat.shared.UserConsoleReader;
+import com.github.yagarea.chat.shared.UserReader;
+import com.github.yagarea.chat.shared.UserSystemInReader;
 import com.github.yagarea.chat.shared.security.RSA;
 
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class Client {
             BigInteger e = new BigInteger(responsePrinterLoop.readLine());
             BigInteger n = new BigInteger(responsePrinterLoop.readLine());
             RSA encryptor = new RSA(e, n);
-            ConsoleUtility consoleReader = new ConsoleUtility();
+            UserReader consoleReader = System.console() == null ? new UserSystemInReader() : new UserConsoleReader();
 
             LoginResponse usernameResponse;
             do {
