@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-/**
- * Created by John on 09.07.17.
- */
 public class ResponsePrinterLoop implements Runnable {
     private BufferedReader socketReader;
     private RSA decryptor;

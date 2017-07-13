@@ -13,14 +13,17 @@ public class Authenticator {
 
     private Pattern login = Pattern.compile("(\\w+):(.+)");
     private Map<String, String> users;
-    private PrintWriter fileWriter;
+
+    private String file;
+
+
 
 
     public Authenticator(String file) {
+        this.file = file;
         try {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
-            users = new HashMap<>();
+            this.users = new HashMap<>();
             while (true) {
                 String line = fileReader.readLine();
                 if (line != null && !line.equals("")) {
@@ -46,9 +49,26 @@ public class Authenticator {
     }
 
     public void registerUser(String newUsername, String newPassword) {
-        String hashedPassword = ShaUtil.hash(newPassword);
-        fileWriter.println(newUsername + ":" + hashedPassword);
-        fileWriter.flush();
-        users.put(newUsername, hashedPassword);
+        try {
+            PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
+            String hashedPassword = ShaUtil.hash(newPassword);
+            fileWriter.println(newUsername + ":" + hashedPassword);
+            fileWriter.flush();
+            users.put(newUsername, hashedPassword);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void changePassword(String username, String newPassword) {
+        try {
+            PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
+            users.put(username, ShaUtil.hash(newPassword));
+            for (String userNameInSet : users.keySet()) {
+                fileWriter.println(userNameInSet + ":" + users.get(userNameInSet));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
