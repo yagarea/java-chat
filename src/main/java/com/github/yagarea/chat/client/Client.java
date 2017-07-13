@@ -46,6 +46,8 @@ public class Client {
                 if (!messageToServer.equals("")) {
                     writer.println(encryptor.encryptString(messageToServer));
                     writer.flush();
+                } else if (messageToServer.toLowerCase().startsWith(":changepassword")) {
+                    writer.println(encryptor.encryptString("changePassword: " + consoleReader.readPassword()));
                 }
             }
         } catch (IOException e) {
