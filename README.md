@@ -5,14 +5,14 @@ Simple encrypted chat in Java
 This project was created as my personal final work within the educational event LSM (lsmstepanov.cz). The entire project is available for all personal or educational purposes. If this project helped you, mark this repository with star. If you want to contribute, I'm open to your pull requests.
 
 ## Project decription
-####Prefereces
+#### Prefereces
 Project is wrote in Java 1.8. It's using xy libraries.
 
-####Security
+#### Security
 * communication between server and client is encrypted by RSA
 * Passwords are saved as SHA hashes
 
-##Usage
+## Usage
 ### server
 you can run it from your IDE or just using by terminal:
    ```
