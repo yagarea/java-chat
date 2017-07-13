@@ -37,7 +37,7 @@ public class Authenticator {
     }
 
     public boolean userIsRegistered(String username) {
-        return users.containsKey(username);
+        return users.get(username) != null;
     }
 
     public boolean authenticate(String descryptedUsername, String descryptedPassword) {
