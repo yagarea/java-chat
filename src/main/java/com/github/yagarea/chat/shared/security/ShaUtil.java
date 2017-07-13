@@ -5,10 +5,8 @@ import com.google.common.hash.Hashing;
 
 public class ShaUtil {
     public static void main(String[] args) {
-        System.out.println(hash("honza"));
-        System.out.println(hash("lsm"));
-        System.out.println(hash("java"));
-        System.out.println(hash("petra"));
+        System.out.println(hash("newPassword"));
+
     }
 
 
