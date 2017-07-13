@@ -18,11 +18,11 @@ Project is wrote in Java 1.8. It's using xy libraries.
 ### server
 you can run it from your IDE or just using by terminal:
    ```
-   java -jar server.jar port
+   java -jar server.jarauthenticationFile port
    ```
    Example:
    ```
-   java -jar target/server.jar 4077
+   java -jar target/server.jar Authentication.txt 4077
    ```
  
 ### Client
