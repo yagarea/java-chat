@@ -26,12 +26,14 @@ public class ClientConnection {
     private final RSA encryptor;
     private final BufferedReader socketReader;
     private final Authenticator authenticator;
+    protected final Socket clientSocket;
 
     ClientConnection(Socket clientSocket, Map<String, ClientConnection> clients, RSA decryptor, Authenticator authenticator) throws IOException {
         this.socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         this.socketWriter = new PrintWriter(clientSocket.getOutputStream());
         this.clients = clients;
         this.decryptor = decryptor;
+        this.clientSocket = clientSocket;
 
         sendEncryptionKeys();
         this.authenticator = authenticator;
@@ -70,9 +72,9 @@ public class ClientConnection {
 
     }
 
-
     public void startListenig() {
-        broadcast(username + " has joined this chatting room");
+        broadcast("SERVER: " + username + " has joined this chatting room");
+        System.out.println("SERVER: " + username + " has joined this chatting room");
         try {
             while (true) {
                 String clientData = socketReader.readLine();
@@ -121,7 +123,7 @@ public class ClientConnection {
         }
     }
 
-    private void sendEncrypeted(String message) {
+    protected void sendEncrypeted(String message) {
         send(encryptor.encryptString(message));
     }
 
