@@ -23,13 +23,12 @@ public class Server {
         Map<String, ClientConnection> clients = new ConcurrentHashMap<>();
         Authenticator auth = new Authenticator(args[0]);
 
+        new Thread(new ServerConsole(clients)).start();
 
         while (chatServer != null) {
             try {
                 Socket clientSocket = chatServer.accept();
-
                 ClientConnectionRunnable clientConnectionInit = new ClientConnectionRunnable(clientSocket, clients, decryptor, auth);
-
                 new Thread(clientConnectionInit).start();
             } catch (IOException e) {
                 e.printStackTrace();
