@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 
 
 public class AuthenticatorTest {
@@ -20,6 +18,7 @@ public class AuthenticatorTest {
     public void testNotUserRegistered() throws Exception {
         Authenticator authenticator = new Authenticator("src/test/java/AuthTest.txt");
         Assert.assertFalse(authenticator.userIsRegistered("unregisteredUser"));
+
     }
 
     @Test
@@ -30,18 +29,18 @@ public class AuthenticatorTest {
     }
 
     @Test
-    public void testAuthenticateWithWrongLogin() throws Exception {
+    public void testAuthenticateWithWrongPassword() throws Exception {
         Authenticator authenticator = new Authenticator("src/test/java/AuthTest.txt");
-        Assert.assertFalse(authenticator.authenticate("wrongUserName", "WrongPassword"));
+        Assert.assertFalse(authenticator.authenticate("registered", "WrongPassword"));
     }
 
     @Test
     public void testRegisterUser() throws Exception {
         File tempAuthFile = File.createTempFile("AuthTest", "txt");
         tempAuthFile.deleteOnExit();
-        new PrintWriter(new FileOutputStream(tempAuthFile)).println("registered:5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8");
 
         Authenticator authenticator = new Authenticator(tempAuthFile.getAbsolutePath());
+        authenticator.registerUser("registered", "password");
         Assert.assertFalse(authenticator.userIsRegistered("unregistered"));
         authenticator.registerUser("unregistered", "password");
         Assert.assertTrue(authenticator.userIsRegistered("unregistered"));
@@ -51,9 +50,10 @@ public class AuthenticatorTest {
     public void testChangePassword() throws Exception {
         File tempAuthFile = File.createTempFile("AuthTest", "txt");
         tempAuthFile.deleteOnExit();
-        new PrintWriter(new FileOutputStream(tempAuthFile)).println("registered:5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8");
 
         Authenticator authenticator = new Authenticator(tempAuthFile.getAbsolutePath());
+        authenticator.registerUser("registered", "oldPassword");
+        Assert.assertTrue(authenticator.authenticate("registered", "oldPassword"));
         authenticator.changePassword("registered", "newPassword");
         Assert.assertFalse(authenticator.authenticate("registered", "password"));
         Assert.assertTrue(authenticator.authenticate("registered", "newPassword"));
