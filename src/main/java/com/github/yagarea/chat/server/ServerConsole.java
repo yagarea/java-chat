@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.Map;
 
 public class ServerConsole implements Runnable {
-    private UserReader consoleReader;
-    private Map<String, ClientConnection> clients;
+    private final UserReader consoleReader;
+    private final Map<String, ClientConnection> clients;
 
     public ServerConsole(Map<String, ClientConnection> clients) {
         this.consoleReader = System.console() == null ? new UserSystemInReader() : new UserConsoleReader();
@@ -20,7 +20,12 @@ public class ServerConsole implements Runnable {
     public void run() {
         while (true) {
             try {
-                executeCommand(consoleReader.readLine());
+                String line = consoleReader.readLine();
+                if (line != null) {
+                    executeCommand(consoleReader.readLine());
+                } else {
+                    break;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -30,10 +35,15 @@ public class ServerConsole implements Runnable {
     private void executeCommand(String command) {
         if (command.startsWith("kick ")) {
             kickUser(command.substring("kick ".length()));
-        } else if (command.startsWith("clients")) {
+        } else if (command.equals("clients")) {
             printListOfClients();
         } else if (command.startsWith("broadcast ")) {
             broadcast(command.substring("broadcast ".length()));
+        } else if (command.equals("help")) {
+            System.out.println("Server commands:" +
+                    "\n\tkick" +
+                    "\n\tbroadcast" +
+                    "\n\tclients");
         } else {
             System.err.println("UNKNOWN COMMAND");
         }
