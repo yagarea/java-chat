@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Server {
 
     public static void main(String[] args) {
-        RSA encryptor = new RSA();
+        RSA decryptor = new RSA();
         final int PORT = Integer.parseInt(args[1]);
 
         ServerSocket chatServer = null;
@@ -27,10 +27,10 @@ public class Server {
         while (chatServer != null) {
             try {
                 Socket clientSocket = chatServer.accept();
-                ClientConnection newClient = new ClientConnection(clientSocket, clients, encryptor, auth);
 
-                new Thread(newClient).start();
-                clients.put(newClient.username, newClient);
+                ClientConnectionRunnable clientConnectionInit = new ClientConnectionRunnable(clientSocket, clients, decryptor, auth);
+
+                new Thread(clientConnectionInit).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

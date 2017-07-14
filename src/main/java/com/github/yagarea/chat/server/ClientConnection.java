@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class ClientConnection implements Runnable {
+public class ClientConnection {
     private static final Pattern PRIVATE_MESSAGE_NICKNAME_PATTERN = Pattern.compile("@(\\w+) (.*)");
     private static final Pattern NICKNAME_RULES = Pattern.compile("\\w+");
 
@@ -70,8 +70,8 @@ public class ClientConnection implements Runnable {
 
     }
 
-    @Override
-    public void run() {
+
+    public void startListenig() {
         broadcast(username + " has joined this chatting room");
         try {
             while (true) {
