@@ -8,7 +8,7 @@ public class PasswordHolder {
     private final String salt;
     private final String hash;
 
-    public PasswordHolder(String hash, String salt) {
+    public PasswordHolder(String salt, String hash) {
         this.hash = hash;
         this.salt = salt;
     }

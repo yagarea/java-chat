@@ -5,7 +5,7 @@ import com.google.common.hash.Hashing;
 
 public class ShaUtil {
     public static void main(String[] args) {
-        System.out.println(hash("newPassword"));
+        System.out.println(hash("1284618579764625476password"));
 
     }
 
