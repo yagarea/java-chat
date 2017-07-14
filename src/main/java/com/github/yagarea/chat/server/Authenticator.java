@@ -11,12 +11,10 @@ import java.util.regex.Pattern;
 public class Authenticator {
 
 
-    private Pattern login = Pattern.compile("(\\w+):(.+)");
-    private Map<String, String> users;
+    private Pattern login = Pattern.compile("(\\w+):(\\d+):(.+)");
+    private Map<String, PasswordHolder> users;
 
     private String file;
-
-
 
 
     public Authenticator(String file) {
@@ -29,7 +27,7 @@ public class Authenticator {
                 if (line != null && !line.equals("")) {
                     Matcher lineMatcher = login.matcher(line);
                     lineMatcher.find();
-                    users.put(lineMatcher.group(1), lineMatcher.group(2));
+                    users.put(lineMatcher.group(1), new PasswordHolder(lineMatcher.group(2), lineMatcher.group(3)));
                 } else {
                     break;
                 }
@@ -44,17 +42,17 @@ public class Authenticator {
     }
 
     public boolean authenticate(String descryptedUsername, String descryptedPassword) {
-        String hashPassword = ShaUtil.hash(descryptedPassword);
-        return hashPassword.equals(users.get(descryptedUsername));
+        String hashPassword = ShaUtil.hash(users.get(descryptedUsername).getSalt() + descryptedPassword);
+        return hashPassword.equals(users.get(descryptedUsername).getHash());
     }
 
     public void registerUser(String newUsername, String newPassword) {
         try {
             PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
-            String hashedPassword = ShaUtil.hash(newPassword);
-            fileWriter.println(newUsername + ":" + hashedPassword);
+            PasswordHolder newPasswordHolder = new PasswordHolder(newPassword);
+            fileWriter.println(newUsername + ":" + newPasswordHolder.getSalt() + ":" + newPasswordHolder.getHash());
             fileWriter.flush();
-            users.put(newUsername, hashedPassword);
+            users.put(newUsername, newPasswordHolder);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,10 +60,11 @@ public class Authenticator {
 
     public void changePassword(String username, String newPassword) {
         try {
-            PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
-            users.put(username, ShaUtil.hash(newPassword));
+            PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, false)));
+            PasswordHolder newPasswordHolder = new PasswordHolder(newPassword);
+            users.put(username, newPasswordHolder);
             for (String userNameInSet : users.keySet()) {
-                fileWriter.println(userNameInSet + ":" + users.get(userNameInSet));
+                fileWriter.println(userNameInSet + ":" + users.get(userNameInSet).getSalt() + ":" + users.get(userNameInSet).getHash());
             }
             fileWriter.flush();
         } catch (IOException e) {
