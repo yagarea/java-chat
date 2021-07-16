@@ -20,9 +20,13 @@ public class Client {
             BigInteger e = new BigInteger(responsePrinterLoop.readLine());
             BigInteger n = new BigInteger(responsePrinterLoop.readLine());
             RSA encryptor = new RSA(e, n);
-            Thread listner = new Thread(responsePrinterLoop);
-            listner.start();
+            Thread listener = new Thread(responsePrinterLoop);
+            listener.start();
             BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Username: ");
+            String username = consoleReader.readLine();
+            writer.println(encryptor.encryptString(username));
+            writer.flush();
             while (true) {
                 String messageToServer = consoleReader.readLine();
                 writer.println(encryptor.encryptString(messageToServer));

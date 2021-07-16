@@ -16,8 +16,7 @@ public class Server {
             while (true) {
                 Socket clientSocket = chatServer.accept();
                 ClientConnection newClient = new ClientConnection(clientSocket, clients, encryptor);
-                newClient.send(encryptor.getE().toString());
-                newClient.send(encryptor.getN().toString());
+
                 new Thread(newClient).start();
                 clients.add(newClient);
             }
