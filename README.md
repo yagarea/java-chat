@@ -29,8 +29,8 @@ Project is written in [Java 1.8](https://www.java.com/) using
 ### Build project using maven
 If you do not have maven already installed on your system you can install by:
 
-On arch based systems: `sudo pacman -S maven`\\
-On debian based systems: `sudo apt install maven`
+- On arch based systems: `sudo pacman -S maven`
+- On debian based systems: `sudo apt install maven`
 
 If you are using other operating system than mentioned above visit 
 [official maven install documentation](http://maven.apache.org/install.html).
